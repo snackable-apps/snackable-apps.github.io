@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Snackable Apps — Sudoku</title>
+
+  <style>
+    :root{
+      --cell-size:46px; --gap:3px;
+      --accent:#4b6cff;
+      font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial, sans-serif;
+    }
+    html,body{height:100%;margin:0}
+    body{display:flex;flex-direction:column;align-items:center;gap:12px;padding:18px;background:#f7f7fb;color:#111}
+    header{display:flex;flex-direction:column;align-items:center;gap:6px}
+    h1{font-size:20px;margin:0}
+    #sub{color:#556; font-size:13px}
+    main{display:flex;flex-direction:column;align-items:center; width:100%; max-width:760px}
+    #board{display:grid;grid-template-columns:repeat(9,var(--cell-size));gap:var(--gap);background:#222;padding:6px;border-radius:8px}
+    .cell{width:var(--cell-size);height:var(--cell-size);display:flex;align-items:center;justify-content:center;background:white;font-size:18px;border-radius:4px;border:1px solid #ddd;box-shadow:0 1px 0 rgba(0,0,0,0.03)}
+    .cell.prefill{background:#eef2ff;font-weight:700;color:#111}
+    .cell input{width:100%;height:100%;border:0;text-align:center;font-size:18px;background:transparent}
+    .controls{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+    button{padding:8px 12px;border-radius:8px;border:0;background:var(--accent);color:white;font-weight:700;cursor:pointer}
+    #status{min-height:20px;color:#223}
+    #ad-banner{width:100%;max-width:468px;margin-top:14px;display:flex;align-items:center;justify-content:center}
+    footer{font-size:12px;color:#556;margin-top:10px}
+    @media (max-width:520px){
+      :root{--cell-size:36px}
+      .cell{font-size:16px}
+    }
+  </style>
+
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-MKPC7JY0E7"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-MKPC7JY0E7');
+  </script>
+
+  <!-- Google AdSense: publisher script (place in head once per page) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4490023750698733"
+          crossorigin="anonymous"></script>
+</head>
+<body>
+  <header>
+    <h1>Snackable Apps — Sudoku</h1>
+    <div id="sub">Quick, simple puzzles — play and enjoy</div>
+  </header>
+
+  <main>
+    <div id="board" aria-label="Sudoku board"></div>
+
+    <div class="controls" role="group" aria-label="Game controls">
+      <button id="newGameBtn">New Game</button>
+      <button id="hintBtn">Hint</button>
+      <button id="checkBtn">Check</button>
+      <button id="solveBtn">Solve</button>
+    </div>
+
+    <div id="status" aria-live="polite"></div>
+
+    <!-- Bottom banner: AdSense display unit (replace slot/id if you change them in AdSense) -->
+    <div id="ad-banner">
+      <!-- display_001 -->
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-4490023750698733"
+           data-ad-slot="9922848476"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+    </div>
+    <script>
+      // Render the ad unit and send ad impression event to GA
+      (adsbygoogle = window.adsbygoogle || []).push({});
+      // track an ad impression in GA4 (also fired at new game in script below)
+      if(typeof gtag === 'function') gtag('event','ad_impression',{location:'bottom'});
+    </script>
+
+  </main>
+
+  <footer>
+    <div>Made with ❤️ by Snackable Apps — small, bite-sized web tools</div>
+  </footer>
+
+  <script>
+    /* ------------------ Puzzles (10) ------------------ */
+    const PUZZLES = [
+      {id:1, puzzle:"530070000600195000098000060800060003400803001700020006060000280000419005000080079", solution:"534678912672195348198342567859761423426853791713924856961537284287419635345286179"},
+      {id:2, puzzle:"200080300060070084030500209000105408000000000402706000301007040720040060004010003", solution:"247981356561273984938546219873195428195824637426736591381657942729348165654912873"},
+      {id:3, puzzle:"000260701680070090190004500820100040004602900050003028009300074040050036703018000", solution:"435269781682571493197834562826195347374682915951743628519326874248957136763418259"},
+      {id:4, puzzle:"300000000005009000200504000020000700160000058704000000000200400000001000000000007", solution:"391687245485219736276534891823461579169372458754895123537928461942751368618143927"},
+      {id:5, puzzle:"000900002000305000706000000020000000000007130000080000000000407000000000001000000", solution:"451967382829345761736812945324596678695287134178134529263579487987421356514683297"},
+      {id:6, puzzle:"000000907000420180000705026100904000050000040000507009920108000034059000507000000", solution:"512673947963428185847715326176934852258196734394587619929841673634259471587362498"},
+      {id:7, puzzle:"030050040008010500460000012070502080000603000040109030250000098001020600080060020", solution:"731659842928314576465872312173542689859763421246189735257431968394128657681596243"},
+      {id:8, puzzle:"001900003020000000000507000000000000000000000000100020000000040800000000030006700", solution:"451962783927831645386547219763495821195278436842136957519724368874653192238619574"},
+      {id:9, puzzle:"000000000400000002001008000000000070060030000000100800000600900900000000000000000", solution:"528971634476135892391248576814592367967436215253617948135864729692753481784329651"},
+      {id:10,puzzle:"000000080000003000005000000000000020700000000000001000000200000010000000060000000", solution:"619472385472583961385916472846759123731648259295321647958237614127694538364185796"}
+    ];
+
+    /* ------------------ State ------------------ */
+    let state = {puzzleIdx: -1, startTime: null, moves: 0, solved: false};
+
+    /* ------------------ Rendering ------------------ */
+    const boardEl = document.getElementById('board');
+    function renderGrid(puzzleStr){
+      boardEl.innerHTML = '';
+      for(let i=0;i<81;i++){
+        const cellWrap = document.createElement('div');
+        cellWrap.className = 'cell';
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.maxLength = 1;
+        input.dataset.index = i;
+        input.style.width = '100%';
+        input.style.height = '100%';
+        input.style.border = 'none';
+        input.style.background = 'transparent';
+        input.style.fontSize = 'inherit';
+        input.style.textAlign = 'center';
+        // thick borders for 3x3 blocks (visual)
+        const r = Math.floor(i / 9), c = i % 9;
+        if ((c % 3) === 2) cellWrap.style.marginRight = '6px';
+        if ((r % 3) === 2) cellWrap.style.marginBottom = '6px';
+        if (puzzleStr[i] !== '0') {
+          input.value = puzzleStr[i];
+          input.disabled = true;
+          cellWrap.classList.add('prefill');
+        }
+        input.addEventListener('input', onCellInput);
+        cellWrap.appendChild(input);
+        boardEl.appendChild(cellWrap);
+      }
+    }
+
+    function readGrid(){
+      const inputs = boardEl.querySelectorAll('input');
+      return Array.from(inputs).map(i => i.value.trim() || '0').join('');
+    }
+    function setCellValue(idx, v){
+      const input = boardEl.querySelector(`input[data-index='${idx}']`);
+      if (input && !input.disabled) input.value = v;
+    }
+
+    function onCellInput(e){
+      const v = e.target.value.replace(/[^1-9]/g,'');
+      e.target.value = v;
+      state.moves++;
+    }
+
+    /* ------------------ Controls ------------------ */
+    document.getElementById('newGameBtn').addEventListener('click', startNewGame);
+    document.getElementById('checkBtn').addEventListener('click', ()=>checkSolution(false));
+    document.getElementById('solveBtn').addEventListener('click', ()=>checkSolution(true));
+    document.getElementById('hintBtn').addEventListener('click', giveHint);
+
+    /* ------------------ Game lifecycle ------------------ */
+    function startNewGame(){
+      state.puzzleIdx = (state.puzzleIdx + 1) % PUZZLES.length;
+      const p = PUZZLES[state.puzzleIdx];
+      renderGrid(p.puzzle);
+      state.startTime = Date.now();
+      state.moves = 0;
+      state.solved = false;
+      setStatus('New game — good luck!');
+      if (typeof gtag === 'function') gtag('event','game_start',{puzzle_id: p.id});
+      // track ad impression (page-level/banner)
+      if (typeof gtag === 'function') gtag('event','ad_impression',{location:'bottom',puzzle_id:p.id});
+    }
+
+    function checkSolution(reveal=false){
+      const current = readGrid();
+      const sol = PUZZLES[state.puzzleIdx].solution;
+      if (current === sol){
+        state.solved = true;
+        const timeSec = Math.round((Date.now() - state.startTime) / 1000);
+        setStatus('Solved! Time: ' + timeSec + 's | moves: ' + state.moves);
+        if (typeof gtag === 'function') gtag('event','game_end',{puzzle_id: PUZZLES[state.puzzleIdx].id, time_sec: timeSec, moves: state.moves});
+      } else if (reveal){
+        for(let i=0;i<81;i++) setCellValue(i, sol[i]);
+        setStatus('Solution revealed');
+        if (typeof gtag === 'function') gtag('event','solve_revealed',{puzzle_id: PUZZLES[state.puzzleIdx].id});
+      } else {
+        setStatus('Not solved yet — keep trying');
+      }
+    }
+
+    function giveHint(){
+      const sol = PUZZLES[state.puzzleIdx].solution;
+      const current = readGrid();
+      const emptyIdx = [];
+      for(let i=0;i<81;i++) if (current[i] === '0') emptyIdx.push(i);
+      if (emptyIdx.length === 0){ setStatus('No empty cells for hint'); return; }
+      const idx = emptyIdx[Math.floor(Math.random()*emptyIdx.length)];
+      setCellValue(idx, sol[idx]);
+      setStatus('Hint given');
+      if (typeof gtag === 'function') gtag('event','hint_used',{puzzle_id: PUZZLES[state.puzzleIdx].id, cell_index: idx});
+    }
+
+    function setStatus(msg){ document.getElementById('status').textContent = msg; }
+
+    /* ------------------ Init ------------------ */
+    startNewGame();
+
+    // Expose small debug helper
+    window.SNACKABLE = { PUZZLES, state };
+  </script>
+</body>
+</html>
