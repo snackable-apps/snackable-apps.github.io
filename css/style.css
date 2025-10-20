@@ -1,0 +1,64 @@
+body {
+  font-family: system-ui, sans-serif;
+  background: #fafafa;
+  margin: 0;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+header {
+  text-align: center;
+  padding: 2rem 1rem;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem 1rem;
+}
+
+.app-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  width: 100%;
+  max-width: 800px;
+}
+
+.app-card {
+  text-decoration: none;
+  color: #333;
+  background: white;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  transition: transform 0.1s ease-in;
+}
+.app-card:hover {
+  transform: translateY(-3px);
+}
+.app-card.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+#ad-banner {
+  margin-top: 2rem;
+  width: 100%;
+  text-align: center;
+}
+
+footer {
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.9rem;
+  background: #fff;
+  border-top: 1px solid #eee;
+}

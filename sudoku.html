@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sudoku | Snackable Apps</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍿</text></svg>">
+  <link rel="stylesheet" href="css/sudoku.css" />
+
+  <!-- GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-MKPC7JY0E7"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-MKPC7JY0E7');
+  </script>
+
+  <!-- AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4490023750698733"
+     crossorigin="anonymous"></script>
+</head>
+<body>
+  <header>
+    <h1>🧩 Sudoku</h1>
+    <a href="index.html">← Back to menu</a>
+  </header>
+
+  <main>
+    <!-- Game Stats -->
+    <div class="game-stats" aria-live="polite">
+      <span id="timer">Time: 00:00</span>
+      <span id="moves">Moves: 0</span>
+    </div>
+
+    <!-- Sudoku Board -->
+    <div id="sudoku-board" role="grid" aria-label="Sudoku puzzle" tabindex="0"></div>
+
+    <!-- Game Controls -->
+    <div class="button-bar" role="group" aria-label="Game controls">
+      <button id="new-game" aria-describedby="new-game-help">New Game</button>
+      <button id="tip" aria-describedby="tip-help">Get Tip</button>
+      <button id="check" aria-describedby="check-help">Check</button>
+      <button id="undo" aria-describedby="undo-help">Undo</button>
+    </div>
+
+    <!-- Help Text -->
+    <div class="help-text" id="new-game-help">Start a new puzzle</div>
+    <div class="help-text" id="tip-help">Reveal one correct number</div>
+    <div class="help-text" id="check-help">Check all filled numbers for correctness</div>
+    <div class="help-text" id="undo-help">Undo your last move</div>
+
+    <!-- Game Status -->
+    <div id="game-status" aria-live="polite" class="status-message"></div>
+
+    <!-- Ad -->
+    <div id="ad-banner">
+      <ins class="adsbygoogle"
+           style="display:block; height:90px;"
+           data-ad-client="ca-pub-4490023750698733"
+           data-ad-slot="9922848476"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+    </div>
+  </main>
+
+  <script src="js/sudoku.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+    if(typeof gtag === 'function') gtag('event','ad_impression',{location:'sudoku_bottom'});
+  </script>
+</body>
+</html>
